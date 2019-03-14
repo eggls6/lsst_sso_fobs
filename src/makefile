@@ -1,13 +1,15 @@
-#Makefile for p-type hierarchical triple simualtion in 2d 
-
+#Makefile
 
 #compiler
 cf=gfortran
-#compilder flags
-cflags=-O  -fbounds-check #-fopenmp 
-#program output name
-pg=lsst_mba.exe
 
+#compiler flags
+cflags=-O  -fbounds-check #-fopenmp 
+
+#program output name
+pg=lsst_mba
+
+#modules
 modk=kind_m.o
 mod0=const_m.o
 mod1=trafo3_m.o
