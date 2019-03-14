@@ -10,7 +10,7 @@ needs: 1)LSST observtion campaign database such as kraken_2026.db (exported SQL 
          (https://naif.jpl.nasa.gov/naif/toolkit.html)
           
  
-use: lsst_mba.exe [LSST obs database] [SSO orbit file] [Output file]
+use: lsst_mba [LSST obs database] [SSO orbit file] [Output file]
 
 
 
