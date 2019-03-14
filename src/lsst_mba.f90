@@ -121,7 +121,7 @@ program lsst_mba
       character(len=80)::hdr,forbfmt,arg(4),dumc
       
       !name of orbits
-      character(len=:),dimension(:),allocatable::orbname0,orbname
+      character(len=10),dimension(:),allocatable::orbname0,orbname
       
       !format strings
       character(len=200)::fmt
@@ -284,7 +284,8 @@ program lsst_mba
       write(*,*)'number of orbits:',norbs
       write(*,*)'reading orbits...'
       
-      allocate(character(lenname) :: orbname0(norbs))
+      allocate(character(10) :: orbname0(norbs))
+      !allocate(character(lenname) :: orbname0(norbs))
       allocate(orbs(norbs,10),visid(norbs),orbid0(norbs),stat=astat)
       if(astat.ne.0) then
         write(*,*)'ERROR: Could not allocate enough memory for asteroid orbits. Reduce number of asteroids in sample.'
@@ -294,10 +295,7 @@ program lsst_mba
 !/////////
 ! READ ORBITS
       open(un,file=forb,status='old')
-      !db
-      !write(*,*)'a,e,i,w,node,m,n,epoch,H'
-       !write(66,*)'q,a,e,i,w,node,m,n,epoch,H,qorb-earthapo,Vism,fsdmax(1)'
-      !edb
+      orbname0(:)=' '
       if (trim(forbfmt)=='COM') then        
        call readopenorb(un,forbhl,lenname,norbs,orbs,orbid0,orbname0)
        !oast(1:10)={a,e,i,w,node,mean_anomaly,n,epoch,Hmag,Vmag}
@@ -316,17 +314,18 @@ program lsst_mba
       
       write(*,*)"orbit input file read: ",forb
 
-      allocate(character(lenname) :: orbname(nsmpl))
+      allocate(character(10) :: orbname(nsmpl))
       allocate(oast(nsmpl,10),rva(nsmpl,6),ma0(nsmpl),rea(nsmpl,3),&
               orbid(nsmpl),visible(nsmpl),stat=astat)
-              
+      
+      orbname(:)=' '        
       do i=1,nsmpl
         oast(i,1:2)=orbs(visid(i),1:2)
         oast(i,3:6)=orbs(visid(i),3:6)*deg2rad
         oast(i,7:10)=orbs(visid(i),7:10)
         ma0(i)=oast(i,6)
         orbid(i)=orbid0(visid(i))
-        orbname(i)=orbname0(visid(i))
+        orbname(i)=trim(orbname0(visid(i)))
       end do
       
       deallocate(orbs,orbid0,orbname0,visid)
@@ -356,7 +355,7 @@ program lsst_mba
 
 !////////////////
 ! MAIN PROGRAM LOOP
-      do k=1,nobs
+do k=1,nobs
        !5 SIG DEPTH FILTER
        fsdp1=fivesigdepth(k)+1.d0
        !PROGRESS OUTPUT TO SCREEN 
@@ -370,7 +369,6 @@ program lsst_mba
        call lat2cart(dicrf,dx)
        call icrf2he(dx)
        call cart2lat(dx,obsdeclip(1:3))
-      ! write(*,*)'ecliptic lat and long',declip(2:3)*rad2deg
  
        !if ecliptic latitude too large or too small to find MBA's cycle
 !       if(declip(1,2)*rad2deg.lt.-80.d0) cycle
@@ -414,7 +412,6 @@ program lsst_mba
          rea(i,1:3)=rea(i,1:3)/dea(i)
          
          !is the object visible?
-         !if(oast(i,10).lt.fsdmax(1).and.abs(angv1v2n(3,rea(i,1:3),rve(1:3)))*rad2deg.lt.140.d0) then
          if(oast(i,10).lt.fsdmax(1)) then
            visible(i)=.true.
          end if !visible
@@ -513,8 +510,8 @@ do j=1,nvis
               camx(i),camy(i),seeingFwhmEff(k),filter(k)
             end if !recorded
      end do !nvis  
-    end do !nobs
-    close(un)
+end do !nobs
+close(un)
 
 !/////////      
 !END PROGRAM 
