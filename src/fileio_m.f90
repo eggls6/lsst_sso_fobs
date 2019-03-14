@@ -36,7 +36,7 @@ integer*8,intent(in)::nsmpl
 
 integer*8,intent(out)::orbid(1:nsmpl)
 real(kind=wp),dimension(1:nsmpl,1:10),intent(out)::oast
-character(len=lenname),dimension(1:nsmpl),intent(out)::orbname
+character(len=*),dimension(1:nsmpl),intent(out)::orbname
            
 integer*8::i,eof
 real(kind=wp)::oe(1:6),ke(1:6),hmag,epoch,n
@@ -51,6 +51,7 @@ if(nhdr.gt.0) then
  end do
 end if
 
+orbname(:)=' '
 do i=1,nsmpl
  read(un,*,iostat=eof)dum1,dum2,oe(1:6),hmag,epoch
  if(eof.ne.0) exit
