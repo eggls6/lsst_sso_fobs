@@ -324,6 +324,8 @@ implicit none
   else
    ma=(n*t+ma0)*rad2deg
   end if
+  
+  if(ma.lt.0._wp) ma=ma+360._wp
 
   if(ma.gt.360._wp) ma=mod(ma,360._wp)
 
