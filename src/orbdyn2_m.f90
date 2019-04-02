@@ -46,6 +46,8 @@ module orbdyn2_m
 
  public::bplane
  
+ public::wrap360
+ 
 ! interface
 !  function lighttraveltime(d)
 !   use kind_m, only:wp
@@ -91,7 +93,22 @@ function lighttraveltime(d)
  lighttraveltime=d/caupd
  return
 end function
-
+!******************************************************
+subroutine wrap_angle(a,l,u)
+! wraps the angle a to lie between 0 and w deg
+ implicit none
+ real(kind=wp),intent(inout)::a
+ real(kind=wp),intent(in)::l,u
+ 
+ if(a.lt.l) then
+  do while(a.lt.l)
+   a=a+u
+  end do
+ end if
+ 
+ if (a.gt.u) a=mod(a,u)
+return
+end subroutine
 !*********************************************** 
 SUBROUTINE com2ke(com,epoch,m1,m2,ke,n)
 !Transform cometetary to Keplerian orbital elements
@@ -119,9 +136,8 @@ call semia2n(ke(1),m1,m2,mm)
 
 !mean anomaly
 ke(6)=(epoch-com(6))*mm*rad2deg
-if(ke(6).lt.0._wp) then
- ke(6)=ke(6)+360._wp
-end if
+
+call wrap_angle(ke(6),0._wp,360._wp)
 
 !e, i
 ke(2:3)=com(2:3)
@@ -289,7 +305,7 @@ implicit none
   ma=n*t+ma0
   end if
 
-  if(ma.gt.pix2) ma=mod(ma,pix2)
+  call wrap_angle(ma,0._wp,pix2)
 
   if(present(deg)) then
    if(deg) then
@@ -325,9 +341,7 @@ implicit none
    ma=(n*t+ma0)*rad2deg
   end if
   
-  if(ma.lt.0._wp) ma=ma+360._wp
-
-  if(ma.gt.360._wp) ma=mod(ma,360._wp)
+  call wrap_angle(ma,0._wp,360._wp)
 
   if(present(deg)) then
    if(deg) then
