@@ -29,6 +29,7 @@ implicit none
 
       !EPOCH
       real(kind=wp),parameter::J2000=2451545._wp         !Julian Date of epoch J2000
+      real(kind=wp),parameter::jd_mjd=2400000.5_wp       !Julian Date / MJD offset
 
       !DAY
       real(kind=wp),parameter::spd=86400._wp               ![s] seconds per mean solar day [D]
