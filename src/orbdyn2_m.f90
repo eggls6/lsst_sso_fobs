@@ -138,7 +138,7 @@ call semia2n(ke(1),m1,m2,mm)
 depoch=epoch-com(6)
 
 if(abs(depoch).gt.jd_mjd) then
- write(*,*)'Warning, epoch of osculating elements and time of pericenter passage may not be in the same units (jd / mjd)
+ write(*,*)'Warning, epoch of osculating elements and time of pericenter passage may not be in the same units (jd / mjd)'
 end if
 
 ke(6)=(epoch-com(6))*mm*rad2deg
