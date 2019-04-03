@@ -6,7 +6,7 @@ module orbdyn2_m
 !//////////////////////////////////////////////////////////////////////////////////
 
  use kind_m, only:wp,ip
- use const_m, only:gk,deg2rad,rad2deg,pi,pix2
+ use const_m, only:gk,deg2rad,rad2deg,pi,pix2,jd_mjd
  use trafo3_m
 
  public::dist3d     !calculate Euclidean distances between objects, solar elongation and phase angle
@@ -122,7 +122,7 @@ real(kind=wp),intent(out),dimension(1:6)::ke !Keplerian orbital elements {a,e,i,
 
 real(kind=wp),intent(out),optional::n !mean motion [rad/day]
 
-real(kind=wp)::mm
+real(kind=wp)::mm,depoch
 
 !pericenter distance to semimajor axis
 if(com(2).ge.0._wp) then
@@ -135,6 +135,12 @@ end if
 call semia2n(ke(1),m1,m2,mm)
 
 !mean anomaly
+depoch=epoch-com(6)
+
+if(abs(depoch).gt.jd_mjd) then
+ write(*,*)'Warning, epoch of osculating elements and time of pericenter passage may not be in the same units (jd / mjd)
+end if
+
 ke(6)=(epoch-com(6))*mm*rad2deg
 
 call wrap_angle(ke(6),0._wp,360._wp)
